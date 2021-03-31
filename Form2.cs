@@ -14,6 +14,12 @@ namespace WindowsForms_NET_Framework4
 
         public static MySqlConnection connection;
 
+        public static string server;
+        public static string db;
+        public static string port;
+        public static string userID;
+        public static string password;
+
 
         string path_Server = Path.Combine(Directory.GetCurrentDirectory(), "server.txt");
         string path_Port = Path.Combine(Directory.GetCurrentDirectory(), "port.txt");
@@ -82,6 +88,14 @@ namespace WindowsForms_NET_Framework4
 
                 if (connection.State == ConnectionState.Open && pathExist)
                 {
+
+
+                    server = textBox1.Text;
+                    port = textBox2.Text;
+                    db = textBox3.Text;
+                    userID = textBox4.Text;
+                    password = textBox5.Text;
+
 
                     Hide();
 

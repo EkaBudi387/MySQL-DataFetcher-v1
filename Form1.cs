@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace WindowsForms_NET_Framework4
 {
+
     public partial class Form1 : Form
     {
+
 
         string dbTable;
         string dbLimit;
         string sortBy;
         string sortByField;
+        string db;
 
 
         DateTime startSearch;
@@ -33,15 +36,16 @@ namespace WindowsForms_NET_Framework4
         bool checkedList = true;
 
 
-
+        DataTable dbDroplist;
         DataTable tableDroplist;
         DataTable searchList;
 
 
 
-        readonly MySqlConnection connection = Form2.connection;
+        MySqlConnection connection;
 
-        readonly string showTables = "show tables";
+        readonly string showTables = "show tables from ";
+        readonly string showDB = "show databases";
 
 
 
@@ -49,6 +53,9 @@ namespace WindowsForms_NET_Framework4
         public Form1()
         {
             InitializeComponent();
+
+            db = Form2.db;
+            connection = Form2.connection;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -83,15 +90,20 @@ namespace WindowsForms_NET_Framework4
 
             radioButton1.Checked = true;
 
-            tableDroplist = TestToConnectMySQLServer.FillData(showTables, connection);
+            dbDroplist = TestToConnectMySQLServer.FillData(showDB, connection);
+            tableDroplist = TestToConnectMySQLServer.FillData(showTables + db, connection);
 
 
-            foreach (DataRow _ in tableDroplist.Rows)
+            foreach (DataRow _ in dbDroplist.Rows)
             {
-                string table = _["Tables_in_fg_m"].ToString();
+                string db = _["Database"].ToString();
 
-                comboBox1.Items.Add(table);
+                comboBox3.Items.Add(db);
             }
+
+
+            comboBox3.SelectedItem = db;
+
         }
 
 
@@ -108,11 +120,19 @@ namespace WindowsForms_NET_Framework4
 
             dbTable = comboBox1.SelectedItem.ToString();
 
-            string dbFields = "show fields from " + dbTable + " from fg_m";
+            string dbFields = "show fields from " + dbTable + " from " + db;
 
             tableFields = TestToConnectMySQLServer.FillData(dbFields, connection);
 
-            dataGridView2.DataSource = tableFields.DefaultView;
+            DataTable dataTable = tableFields.Copy();
+
+            foreach(DataColumn _ in tableFields.Columns)
+            {
+                if (_.ColumnName != "Field")
+                    dataTable.Columns.Remove(_.ColumnName);
+            }
+
+            dataGridView2.DataSource = dataTable.DefaultView;
 
             checkedListBox1.Items.Clear();
 
@@ -131,8 +151,13 @@ namespace WindowsForms_NET_Framework4
 
             }
 
+            
+
             foreach (DataRow dataRow in tableFields.Rows)
             {
+
+                comboBox2.SelectedItem = dataRow["Field"].ToString();
+
                 if (dataRow["Field"].ToString() == "Time")
                 {
                     comboBox2.SelectedItem = dataRow["Field"].ToString();
@@ -150,7 +175,6 @@ namespace WindowsForms_NET_Framework4
                 }
                 else
                 {
-
                 }
             }
 
@@ -185,6 +209,8 @@ namespace WindowsForms_NET_Framework4
         private void GetTable()
         {
             CreateSQL();
+
+            connection = TestToConnectMySQLServer.OpenConnection(Form2.server, Form2.port, db, Form2.userID, Form2.password);
 
             if (checkBox1.Checked)
                 searchList = TestToConnectMySQLServer.FillData(dbSQLEditor, connection);
@@ -283,7 +309,11 @@ namespace WindowsForms_NET_Framework4
         private void button5_Click(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
+            {
                 useSQLEditor = true;
+                connection = TestToConnectMySQLServer.OpenConnection(Form2.server, Form2.port, db, Form2.userID, Form2.password);
+            }
+                
             else
                 useSQLEditor = false;
 
@@ -439,6 +469,28 @@ namespace WindowsForms_NET_Framework4
                 MessageBox.Show("Please click Search button");
             }
 
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            db = comboBox3.SelectedItem.ToString();
+
+            comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
+
+            radioButton1.Checked = true;
+
+            checkedListBox1.Items.Clear();
+            dataGridView2.DataSource = null;
+
+            tableDroplist = TestToConnectMySQLServer.FillData(showTables + db, connection);
+
+            foreach (DataRow _ in tableDroplist.Rows)
+            {
+                string table = _["Tables_in_" + db].ToString();
+
+                comboBox1.Items.Add(table);
+            }
         }
     }
 }

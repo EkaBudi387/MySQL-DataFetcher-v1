@@ -10,7 +10,6 @@ namespace WindowsForms_NET_Framework4
     {
 
 
-
         public static string AllRecords(string dbCondition, string select, string dbTable, string dbLimit, string sortBy, string sortByField)
         {
             string dbSQL;
