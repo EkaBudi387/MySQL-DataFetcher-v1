@@ -20,7 +20,7 @@ namespace WindowsForms_NET_Framework4
         private void buttonFormClosed(object sender, FormClosedEventArgs e)
         {
 
-            Form1.setConditionTable.Rows[0][Form1.field] = richTextBox1.Text;
+            Form1.setConditionTable.Rows[0][Form1.field] = richTextBox1.Text.Replace("\t","");
 
             Form1.dbCondition = null;
 
