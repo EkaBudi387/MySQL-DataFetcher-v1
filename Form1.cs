@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace WindowsForms_NET_Framework4
 {
@@ -40,8 +41,6 @@ namespace WindowsForms_NET_Framework4
         DataTable tableDroplist;
         DataTable searchList;
 
-
-
         MySqlConnection connection;
 
         readonly string showTables = "show tables from ";
@@ -49,10 +48,11 @@ namespace WindowsForms_NET_Framework4
 
 
 
-
         public Form1()
         {
             InitializeComponent();
+
+            dataGridView1.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(dataGridView1, true, null);
 
             db = Form2.db;
             connection = Form2.connection;
@@ -75,7 +75,6 @@ namespace WindowsForms_NET_Framework4
             }
 
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -105,7 +104,6 @@ namespace WindowsForms_NET_Framework4
             comboBox3.SelectedItem = db;
 
         }
-
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -180,7 +178,6 @@ namespace WindowsForms_NET_Framework4
 
         }
 
-
         private async void button1_Click(object sender, EventArgs e)
         {
             label7.Text = "Loading Data... Please Wait...";
@@ -219,7 +216,6 @@ namespace WindowsForms_NET_Framework4
 
         }
 
-
         protected async Task<DataTable> Loading()
         {
             await Task.Run(() => { GetTable(); });
@@ -227,19 +223,32 @@ namespace WindowsForms_NET_Framework4
             return searchList;
         }
 
-
-        private void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            label7.Text = "Saving to Excel...";
 
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            await SavingExcel();
+
+            label7.Text = "Data Table";
+
+        }
+
+        private void SaveExcel()
+        {
+            try
             {
-                Stream s = File.Open(saveFileDialog.FileName, FileMode.Create);
-
-                searchList.ToCSV(s);
+                My_DataTable_Extensions.ExportToExcel(searchList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
 
+        private async Task SavingExcel()
+        {
+            await Task.Run(() => { SaveExcel(); });
+        }
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -253,7 +262,6 @@ namespace WindowsForms_NET_Framework4
             }
 
         }
-
 
         private void SetCondition(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -275,14 +283,12 @@ namespace WindowsForms_NET_Framework4
 
         }
 
-
         private void button4_Click(object sender, EventArgs e)
         {
             ClearCondition(tableFields);
 
             MessageBox.Show("Conditions Cleared!", "Information");
         }
-
 
         private void ClearCondition(DataTable tableFields)
         {
@@ -304,7 +310,6 @@ namespace WindowsForms_NET_Framework4
                 }
             }
         }
-
 
         private void button5_Click(object sender, EventArgs e)
         {
