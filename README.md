@@ -7,6 +7,7 @@ At the main display, you can select every database inside your MySQL server.
 The available table selections will dynamically change as you change your selected database.
 To apply your queries, you just need to double click the target field and paste your multiple values there.
 You can export milions of data in instant by prevent the data loads at main windows but directly export to Excel.
+The app also use asyncrhonous threading to prevent app from freezing when loading large data.
 You almost have no need to write any SQL command with the available GUI such as Search Type (All, first, or last duplicate), Sort By, and Limit.
 The purpose of this app is to increase efficiency for a data analyst to query data from database.
 Reach me via https://www.linkedin.com/in/i-wayan-eka-budi-u-34a654149/ to request the full installer.
