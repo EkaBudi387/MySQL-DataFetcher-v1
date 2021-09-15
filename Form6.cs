@@ -16,6 +16,9 @@ namespace WindowsForms_NET_Framework4
         string path_access = Path.Combine(Directory.GetCurrentDirectory(), "accessPath.txt");
         string path_log = Path.Combine(Directory.GetCurrentDirectory(), "logPath.txt");
 
+        string path_accessSQL = Path.Combine(Directory.GetCurrentDirectory(), "accessPathSQL.txt");
+        string path_logSQL = Path.Combine(Directory.GetCurrentDirectory(), "logPathSQL.txt");
+
 
         public Form6()
         {
@@ -24,34 +27,69 @@ namespace WindowsForms_NET_Framework4
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (textBox3.Text == "We202005%%")
+            if (Form2.IsMySQL)
             {
-                try
+                if (textBox3.Text == "We202005%%")
                 {
-                    File.WriteAllText(path_access, GlobalCryptography.Decrypt(File.ReadAllText(path_access)));
-                    File.WriteAllText(path_log, GlobalCryptography.Decrypt(File.ReadAllText(path_log)));
+                    try
+                    {
+                        File.WriteAllText(path_access, GlobalCryptography.Decrypt(File.ReadAllText(path_access)));
+                        File.WriteAllText(path_log, GlobalCryptography.Decrypt(File.ReadAllText(path_log)));
+                    }
+                    catch
+                    {
+                        MessageBox.Show("No path stored");
+                    }
+
+                    if (textBox1.Text != "")
+                        File.AppendAllText(path_access, textBox1.Text + "\n");
+
+                    if (textBox2.Text != "")
+                        File.AppendAllText(path_log, textBox2.Text + "\n");
+
+                    File.WriteAllText(path_access, GlobalCryptography.Encrypt(File.ReadAllText(path_access)));
+                    File.WriteAllText(path_log, GlobalCryptography.Encrypt(File.ReadAllText(path_log)));
+
+                    MessageBox.Show("Path Added", "Information");
                 }
-                catch
+
+                else
                 {
-                    MessageBox.Show("No path stored");
+                    MessageBox.Show("Wrong Password", "Information");
                 }
-
-                if (textBox1.Text != "")
-                    File.AppendAllText(path_access, textBox1.Text + "\n");
-
-                if (textBox2.Text != "")
-                    File.AppendAllText(path_log, textBox2.Text + "\n");
-
-                File.WriteAllText(path_access, GlobalCryptography.Encrypt(File.ReadAllText(path_access)));
-                File.WriteAllText(path_log, GlobalCryptography.Encrypt(File.ReadAllText(path_log)));
-
-                MessageBox.Show("Path Added", "Information");
             }
-
             else
             {
-                MessageBox.Show("Wrong Password", "Information");
+                if (textBox3.Text == "We202005%%")
+                {
+                    try
+                    {
+                        File.WriteAllText(path_accessSQL, GlobalCryptography.Decrypt(File.ReadAllText(path_accessSQL)));
+                        File.WriteAllText(path_logSQL, GlobalCryptography.Decrypt(File.ReadAllText(path_logSQL)));
+                    }
+                    catch
+                    {
+                        MessageBox.Show("No path stored");
+                    }
+
+                    if (textBox1.Text != "")
+                        File.AppendAllText(path_accessSQL, textBox1.Text + "\n");
+
+                    if (textBox2.Text != "")
+                        File.AppendAllText(path_logSQL, textBox2.Text + "\n");
+
+                    File.WriteAllText(path_accessSQL, GlobalCryptography.Encrypt(File.ReadAllText(path_accessSQL)));
+                    File.WriteAllText(path_logSQL, GlobalCryptography.Encrypt(File.ReadAllText(path_logSQL)));
+
+                    MessageBox.Show("Path Added", "Information");
+                }
+
+                else
+                {
+                    MessageBox.Show("Wrong Password", "Information");
+                }
             }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

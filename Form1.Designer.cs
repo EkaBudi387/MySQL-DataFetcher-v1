@@ -80,6 +80,7 @@ namespace WindowsForms_NET_Framework4
             this.comboBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(183, 21);
+            this.comboBox1.Sorted = true;
             this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -88,9 +89,9 @@ namespace WindowsForms_NET_Framework4
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(182, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 13);
+            this.label1.Size = new System.Drawing.Size(67, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Select Station";
+            this.label1.Text = "Select Table";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // limitTB
@@ -327,6 +328,7 @@ namespace WindowsForms_NET_Framework4
             this.comboBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(137, 21);
+            this.comboBox3.Sorted = true;
             this.comboBox3.TabIndex = 30;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
@@ -470,7 +472,7 @@ namespace WindowsForms_NET_Framework4
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MySQL-DataFetcher v1";
+            this.Text = "MySQL-DataFetcher v1p2";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.buttonExitWindow);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
