@@ -55,7 +55,6 @@ namespace WindowsForms_NET_Framework4
 
 
 
-
         public Form1()
         {
             InitializeComponent();
@@ -75,11 +74,6 @@ namespace WindowsForms_NET_Framework4
                 connectionSQL = Form2.connectionSQL;
             }
             
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void buttonExitWindow(object sender, FormClosedEventArgs e)
@@ -384,65 +378,49 @@ namespace WindowsForms_NET_Framework4
             await Task.Run(() => { SaveExcel(); });
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ClearCondition(DataTable tableFields)
         {
-            int i = 0;
-
-            checkedList = !checkedList;
-
-            foreach (DataRow dataRow in tableFields.Rows)
+            if (Form2.IsMySQL)
             {
-                checkedListBox1.SetItemChecked(i++, checkedList);
-            }
+                foreach (DataRow dataRow in tableFields.Rows)
+                {
 
-        }
+                    if (dataRow["Field"].ToString() != "Time")
+                    {
 
-        private void SetCondition(object sender, DataGridViewCellMouseEventArgs e)
-        {
+                        setConditionTable.Rows[0][dataRow["Field"].ToString()] = null;
 
-            field = dataGridView2[e.ColumnIndex, e.RowIndex].Value.ToString();
+                    }
+                    else
+                    {
 
-            if (field != "Time")
-            {
-                Form3 form3 = new Form3();
-                form3.Text = field + " query";
-                form3.Show();
+                        setConditionTable.Rows[0][dataRow["Field"].ToString()] = null;
+                        setConditionTable.Rows[1][dataRow["Field"].ToString()] = null;
+
+                    }
+                }
             }
             else
             {
-                Form4 form4 = new Form4();
-                form4.Text = field + " query";
-                form4.Show();
-            }
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            ClearCondition(tableFields);
-
-            MessageBox.Show("Conditions Cleared!", "Information");
-        }
-
-        private void ClearCondition(DataTable tableFields)
-        {
-            foreach (DataRow dataRow in tableFields.Rows)
-            {
-
-                if (dataRow["Field"].ToString() != "Time")
+                foreach (DataRow dataRow in tableFields.Rows)
                 {
 
-                    setConditionTable.Rows[0][dataRow["Field"].ToString()] = null;
+                    if (dataRow["COLUMN_NAME"].ToString() != "Time")
+                    {
 
-                }
-                else
-                {
+                        setConditionTable.Rows[0][dataRow["COLUMN_NAME"].ToString()] = null;
 
-                    setConditionTable.Rows[0][dataRow["Field"].ToString()] = null;
-                    setConditionTable.Rows[1][dataRow["Field"].ToString()] = null;
+                    }
+                    else
+                    {
 
+                        setConditionTable.Rows[0][dataRow["COLUMN_NAME"].ToString()] = null;
+                        setConditionTable.Rows[1][dataRow["COLUMN_NAME"].ToString()] = null;
+
+                    }
                 }
             }
+            
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -629,8 +607,29 @@ namespace WindowsForms_NET_Framework4
 
                 foreach (DataRow dataRow in tableFields.Rows)
                 {
-                    if (dataRow["COLUMN_NAME"].ToString() != "Time")
+                    if (dataRow["COLUMN_NAME"].ToString().Contains("Time") || dataRow["COLUMN_NAME"].ToString().Contains("time") || dataRow["COLUMN_NAME"].ToString().Contains("TIME"))
                     {
+                        string field = null;
+
+                        string startTime = setConditionTable.Rows[0][dataRow["COLUMN_NAME"].ToString()].ToString();
+                        string endTime = setConditionTable.Rows[1][dataRow["COLUMN_NAME"].ToString()].ToString();
+
+                        if (startTime != "" && endTime != "")
+                        {
+                            field = dataRow["COLUMN_NAME"].ToString();
+                            dbCondition += thisAnd;
+                            dbCondition += "(";
+
+                            dbCondition += field + " >= " + "'" + startTime + "'" + " AND " + field + " <= " + "'" + endTime + "'";
+
+                            dbCondition += ")";
+                            thisAnd = "'\n'AND'\n'";
+                        }
+                    }
+
+                    else
+                    {
+
                         string field = null;
 
                         string s = setConditionTable.Rows[0][dataRow["COLUMN_NAME"].ToString()].ToString();
@@ -651,7 +650,7 @@ namespace WindowsForms_NET_Framework4
                                 if (_ != "")
                                 {
                                     dbCondition += thisOR;
-                                    dbCondition += field + " like " + "\"" + _ + "\"";
+                                    dbCondition += field + " like " + "'" + _ + "'";
                                     thisOR = " OR\n";
                                 }
 
@@ -660,26 +659,7 @@ namespace WindowsForms_NET_Framework4
                             dbCondition += ")";
                             thisAnd = "\nAND\n";
                         }
-                    }
 
-                    else
-                    {
-                        string field = null;
-
-                        string startTime = setConditionTable.Rows[0][dataRow["COLUMN_NAME"].ToString()].ToString();
-                        string endTime = setConditionTable.Rows[1][dataRow["COLUMN_NAME"].ToString()].ToString();
-
-                        if (startTime != "" && endTime != "")
-                        {
-                            field = dataRow["COLUMN_NAME"].ToString();
-                            dbCondition += thisAnd;
-                            dbCondition += "(";
-
-                            dbCondition += field + " >= " + "\"" + startTime + "\"" + " AND " + field + " <= " + "\"" + endTime + "\"";
-
-                            dbCondition += ")";
-                            thisAnd = "'\n'AND'\n'";
-                        }
                     }
                 }
 
@@ -794,6 +774,43 @@ namespace WindowsForms_NET_Framework4
                 }
             }
 
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            int i = 0;
+
+            checkedList = !checkedList;
+
+            foreach (DataRow dataRow in tableFields.Rows)
+            {
+                checkedListBox1.SetItemChecked(i++, checkedList);
+            }
+        }
+
+        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            field = dataGridView2[e.ColumnIndex, e.RowIndex].Value.ToString();
+
+            if (field.Contains("Time") || field.Contains("TIME") || field.Contains("time"))
+            {
+                Form4 form4 = new Form4();
+                form4.Text = field + " query";
+                form4.Show();
+            }
+            else
+            {
+                Form3 form3 = new Form3();
+                form3.Text = field + " query";
+                form3.Show();
+            }
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            ClearCondition(tableFields);
+
+            MessageBox.Show("Conditions Cleared!", "Information");
         }
     }
 }
