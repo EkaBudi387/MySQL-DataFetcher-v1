@@ -93,10 +93,13 @@ namespace WindowsForms_NET_Framework4
 
                 }
 
-                connection = TestToConnectMySQLServer.OpenConnectionMySQL(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+                
 
                 try
                 {
+
+                    connection = TestToConnectMySQLServer.OpenConnectionMySQL(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+
                     string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText(path_access));
 
                     string[] accessPath = accessPaths.Split('\n');
@@ -141,6 +144,10 @@ namespace WindowsForms_NET_Framework4
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
+                }
+                finally
+                {
+                    connection.Close();
                 }
 
             }
