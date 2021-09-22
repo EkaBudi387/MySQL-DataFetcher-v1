@@ -323,12 +323,25 @@ namespace WindowsForms_NET_Framework4
             {
                 CreateSQL();
 
-                connection = TestToConnectMySQLServer.OpenConnectionMySQL(Form2.server, Form2.port, db, Form2.userID, Form2.password);
+                try
+                {
+                    connection = TestToConnectMySQLServer.OpenConnectionMySQL(Form2.server, Form2.port, db, Form2.userID, Form2.password);
 
-                if (checkBox1.Checked)
-                    searchList = TestToConnectMySQLServer.FillDataMySQL(dbSQLEditor, connection);
-                else
-                    searchList = TestToConnectMySQLServer.FillDataMySQL(dbSQL, connection);
+                    if (checkBox1.Checked)
+                        searchList = TestToConnectMySQLServer.FillDataMySQL(dbSQLEditor, connection);
+                    else
+                        searchList = TestToConnectMySQLServer.FillDataMySQL(dbSQL, connection);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+
+                
             }
             else
             {
@@ -429,8 +442,19 @@ namespace WindowsForms_NET_Framework4
             {
                 if (checkBox1.Checked)
                 {
-                    useSQLEditor = true;
-                    connection = TestToConnectMySQLServer.OpenConnectionMySQL(Form2.server, Form2.port, db, Form2.userID, Form2.password);
+                    try
+                    {
+                        useSQLEditor = true;
+                        connection = TestToConnectMySQLServer.OpenConnectionMySQL(Form2.server, Form2.port, db, Form2.userID, Form2.password);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
                 }
 
                 else

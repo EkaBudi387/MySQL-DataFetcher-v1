@@ -20,7 +20,7 @@ namespace WindowsForms_NET_Framework4
             string conn051 = password;
 
 
-            string connectionString = string.Format("server={0};Port={1};database={2};uid={3};pwd={4}", conn011, conn021, conn031, conn041, conn051);
+            string connectionString = string.Format("server={0};Port={1};database={2};uid={3};pwd={4};Pooling=False;", conn011, conn021, conn031, conn041, conn051);
 
             MySqlConnection connection = new MySqlConnection(connectionString);
 
