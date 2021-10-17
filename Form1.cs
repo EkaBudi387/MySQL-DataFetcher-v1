@@ -366,19 +366,30 @@ namespace WindowsForms_NET_Framework4
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            label7.Text = "Saving to Excel...";
+            label7.Text = "Saving to CSV...";
 
-            await SavingExcel();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.DefaultExt = "csv";
+            saveFileDialog.Filter =
+                "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Stream s = File.Open(saveFileDialog.FileName, FileMode.Create);
+
+                await SavingExcel(s);
+            }
 
             label7.Text = "Data Table";
-
         }
 
-        private void SaveExcel()
+        private void SaveExcel(Stream path)
         {
             try
             {
-                My_DataTable_Extensions.ExportToExcel(searchList);
+                //My_DataTable_Extensions.ExportToExcel(searchList);
+                searchList.ToCSV(path);
             }
             catch (Exception ex)
             {
@@ -386,9 +397,9 @@ namespace WindowsForms_NET_Framework4
             }
         }
 
-        private async Task SavingExcel()
+        private async Task SavingExcel(Stream path)
         {
-            await Task.Run(() => { SaveExcel(); });
+            await Task.Run(() => { SaveExcel(path); });
         }
 
         private void ClearCondition(DataTable tableFields)
