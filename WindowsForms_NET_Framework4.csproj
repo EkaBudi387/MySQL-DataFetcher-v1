@@ -7,7 +7,7 @@
     <ProjectGuid>{ACF91230-1570-46E0-B0EA-6934129F8721}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WindowsForms_NET_Framework4</RootNamespace>
-    <AssemblyName>MySQL_GUI_v1p3</AssemblyName>
+    <AssemblyName>MySQL_GUI_v1p4</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -30,35 +30,49 @@ namespace WindowsForms_NET_Framework4
         public static string userIDSQL;
         public static string passwordSQL;
 
+        public static string personalMySQLpath;
+        public static string personalMSSQLpath;
 
-        string path_Server = Path.Combine(Directory.GetCurrentDirectory(), "server.txt");
-        string path_Port = Path.Combine(Directory.GetCurrentDirectory(), "port.txt");
-        string path_Database = Path.Combine(Directory.GetCurrentDirectory(), "database.txt");
-        string path_UserID = Path.Combine(Directory.GetCurrentDirectory(), "username.txt");
-        string path_Password = Path.Combine(Directory.GetCurrentDirectory(), "password.txt");
-        string path_entropy = Path.Combine(Directory.GetCurrentDirectory(), "entropy.txt");
-        string path_log = Path.Combine(Directory.GetCurrentDirectory(), "logPath.txt");
-        string path_access = Path.Combine(Directory.GetCurrentDirectory(), "accessPath.txt");
+
+        string path_Server = "server.txt";
+        string path_Port = "port.txt";
+        string path_Database = "database.txt";
+        string path_UserID = "username.txt";
+        string path_Password = "password.txt";
+        string path_entropy = "entropy.txt";
+        //string path_log = "logPath.txt";
+        string path_access = "accessPath.txt";
         string path_logger = Path.Combine(Directory.GetCurrentDirectory(), "log.txt");
 
 
-        string path_ServerSQL = Path.Combine(Directory.GetCurrentDirectory(), "serverSQL.txt");
-        string path_DatabaseSQL = Path.Combine(Directory.GetCurrentDirectory(), "databaseSQL.txt");
-        string path_UserIDSQL = Path.Combine(Directory.GetCurrentDirectory(), "usernameSQL.txt");
-        string path_PasswordSQL = Path.Combine(Directory.GetCurrentDirectory(), "passwordSQL.txt");
-        string path_entropySQL = Path.Combine(Directory.GetCurrentDirectory(), "entropySQL.txt");
-        string path_logSQL = Path.Combine(Directory.GetCurrentDirectory(), "logPathSQL.txt");
-        string path_accessSQL = Path.Combine(Directory.GetCurrentDirectory(), "accessPathSQL.txt");
+        string path_ServerSQL = "serverSQL.txt";
+        string path_DatabaseSQL = "databaseSQL.txt";
+        string path_UserIDSQL = "usernameSQL.txt";
+        string path_PasswordSQL = "passwordSQL.txt";
+        string path_entropySQL = "entropySQL.txt";
+        //string path_logSQL = "logPathSQL.txt";
+        string path_accessSQL = "accessPathSQL.txt";
         string path_loggerSQL = Path.Combine(Directory.GetCurrentDirectory(), "logSQL.txt");
 
 
         public Form2()
         {
             InitializeComponent();
+
+            personalMySQLpath = $"{Directory.GetCurrentDirectory()}//MySQL//{Environment.UserName.Replace('\\', '_')}";
+            personalMSSQLpath = $"{Directory.GetCurrentDirectory()}//MSSQL//{Environment.UserName.Replace('\\', '_')}";
+
+            if (!Directory.Exists(personalMySQLpath))
+                Directory.CreateDirectory(personalMySQLpath);
+
+            if (!Directory.Exists(personalMSSQLpath))
+                Directory.CreateDirectory(personalMSSQLpath);
+
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             if (MySQL.Checked)
             {
 
@@ -67,10 +81,10 @@ namespace WindowsForms_NET_Framework4
 
                     IsMySQL = true;
 
-                    File.WriteAllText(path_Server, textBox1.Text);
-                    File.WriteAllText(path_Port, textBox2.Text);
-                    File.WriteAllText(path_Database, textBox3.Text);
 
+                    File.WriteAllText($"{personalMySQLpath}//{path_Server}", textBox1.Text);
+                    File.WriteAllText($"{personalMySQLpath}//{path_Port}", textBox2.Text);
+                    File.WriteAllText($"{personalMySQLpath}//{path_Database}", textBox3.Text);
 
 
                     byte[] userID = Encoding.UTF8.GetBytes(textBox4.Text);
@@ -86,21 +100,28 @@ namespace WindowsForms_NET_Framework4
                     byte[] cipherUserID = ProtectedData.Protect(userID, entropy, DataProtectionScope.CurrentUser);
                     byte[] cipherPassword = ProtectedData.Protect(password, entropy, DataProtectionScope.CurrentUser);
 
-                    File.WriteAllBytes(path_entropy, entropy);
-                    File.WriteAllBytes(path_UserID, cipherUserID);
-                    File.WriteAllBytes(path_Password, cipherPassword);
-
+                    File.WriteAllBytes($"{personalMySQLpath}//{path_entropy}", entropy);
+                    File.WriteAllBytes($"{personalMySQLpath}//{path_UserID}", cipherUserID);
+                    File.WriteAllBytes($"{personalMySQLpath}//{path_Password}", cipherPassword);
 
                 }
 
-                
+                try
+                {
+                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText($"{personalMySQLpath}//{path_access}"));
+                }
+                catch
+                {
+                    MessageBox.Show("Current Path is Not Allowed", "Information");
+                    return;
+                }
 
                 try
                 {
 
                     connection = TestToConnectMySQLServer.OpenConnectionMySQL(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
 
-                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText(path_access));
+                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText($"{personalMySQLpath}//{path_access}"));
 
                     string[] accessPath = accessPaths.Split('\n');
 
@@ -158,8 +179,8 @@ namespace WindowsForms_NET_Framework4
 
                     IsMySQL = false;
 
-                    File.WriteAllText(path_ServerSQL, textBox1.Text);
-                    File.WriteAllText(path_DatabaseSQL, textBox3.Text);
+                    File.WriteAllText($"{personalMSSQLpath}//{path_ServerSQL}", textBox1.Text);
+                    File.WriteAllText($"{personalMSSQLpath}//{path_DatabaseSQL}", textBox3.Text);
 
 
 
@@ -176,18 +197,29 @@ namespace WindowsForms_NET_Framework4
                     byte[] cipherUserID = ProtectedData.Protect(userID, entropy, DataProtectionScope.CurrentUser);
                     byte[] cipherPassword = ProtectedData.Protect(password, entropy, DataProtectionScope.CurrentUser);
 
-                    File.WriteAllBytes(path_entropySQL, entropy);
-                    File.WriteAllBytes(path_UserIDSQL, cipherUserID);
-                    File.WriteAllBytes(path_PasswordSQL, cipherPassword);
+                    File.WriteAllBytes($"{personalMSSQLpath}//{path_entropySQL}", entropy);
+                    File.WriteAllBytes($"{personalMSSQLpath}//{path_UserIDSQL}", cipherUserID);
+                    File.WriteAllBytes($"{personalMSSQLpath}//{path_PasswordSQL}", cipherPassword);
 
 
                 }
 
-                connectionSQL = TestToConnectMySQLServer.OpenConnectionSQL(textBox1.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+                try
+                {
+                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText($"{personalMSSQLpath}//{path_accessSQL}"));
+                }
+                catch
+                {
+                    MessageBox.Show("Current Path is Not Allowed", "Information");
+                    return;
+                }
 
                 try
                 {
-                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText(path_accessSQL));
+
+                    connectionSQL = TestToConnectMySQLServer.OpenConnectionSQL(textBox1.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+
+                    string accessPaths = GlobalCryptography.Decrypt(File.ReadAllText($"{personalMSSQLpath}//{path_accessSQL}"));
 
                     string[] accessPath = accessPaths.Split('\n');
 
@@ -237,15 +269,16 @@ namespace WindowsForms_NET_Framework4
 
         private void Form2_Load(object sender, EventArgs e)
         {
+
             try
             {
-                textBox1.Text = File.ReadAllText(path_Server);
-                textBox2.Text = File.ReadAllText(path_Port);
-                textBox3.Text = File.ReadAllText(path_Database);
+                textBox1.Text = File.ReadAllText($"{personalMySQLpath}//{path_Server}");
+                textBox2.Text = File.ReadAllText($"{personalMySQLpath}//{path_Port}");
+                textBox3.Text = File.ReadAllText($"{personalMySQLpath}//{path_Database}");
 
-                byte[] userIDByte = File.ReadAllBytes(path_UserID);
-                byte[] passwordByte = File.ReadAllBytes(path_Password);
-                byte[] entropyByte = File.ReadAllBytes(path_entropy);
+                byte[] userIDByte = File.ReadAllBytes($"{personalMySQLpath}//{path_UserID}");
+                byte[] passwordByte = File.ReadAllBytes($"{personalMySQLpath}//{path_Password}");
+                byte[] entropyByte = File.ReadAllBytes($"{personalMySQLpath}//{path_entropy}");
 
                 byte[] decipherUserID = ProtectedData.Unprotect(userIDByte, entropyByte, DataProtectionScope.CurrentUser);
                 byte[] decipherPassword = ProtectedData.Unprotect(passwordByte, entropyByte, DataProtectionScope.CurrentUser);
@@ -285,12 +318,12 @@ namespace WindowsForms_NET_Framework4
 
                 try
                 {
-                    textBox1.Text = File.ReadAllText(path_ServerSQL);
-                    textBox3.Text = File.ReadAllText(path_DatabaseSQL);
+                    textBox1.Text = File.ReadAllText($"{personalMSSQLpath}//{path_ServerSQL}");
+                    textBox3.Text = File.ReadAllText($"{personalMSSQLpath}//{path_DatabaseSQL}");
 
-                    byte[] userIDByte = File.ReadAllBytes(path_UserIDSQL);
-                    byte[] passwordByte = File.ReadAllBytes(path_PasswordSQL);
-                    byte[] entropyByte = File.ReadAllBytes(path_entropySQL);
+                    byte[] userIDByte = File.ReadAllBytes($"{personalMSSQLpath}//{path_UserIDSQL}");
+                    byte[] passwordByte = File.ReadAllBytes($"{personalMSSQLpath}//{path_PasswordSQL}");
+                    byte[] entropyByte = File.ReadAllBytes($"{personalMSSQLpath}//{path_entropySQL}");
 
                     byte[] decipherUserID = ProtectedData.Unprotect(userIDByte, entropyByte, DataProtectionScope.CurrentUser);
                     byte[] decipherPassword = ProtectedData.Unprotect(passwordByte, entropyByte, DataProtectionScope.CurrentUser);
@@ -301,6 +334,7 @@ namespace WindowsForms_NET_Framework4
                 catch
                 {
                     textBox1.Text = null;
+                    textBox2.Text = null;
                     textBox3.Text = null;
                     textBox4.Text = null;
                     textBox5.Text = null;
@@ -315,12 +349,13 @@ namespace WindowsForms_NET_Framework4
 
                 try
                 {
-                    textBox1.Text = File.ReadAllText(path_Server);
-                    textBox3.Text = File.ReadAllText(path_Database);
+                    textBox1.Text = File.ReadAllText($"{personalMySQLpath}//{path_Server}");
+                    textBox2.Text = File.ReadAllText($"{personalMySQLpath}//{path_Port}");
+                    textBox3.Text = File.ReadAllText($"{personalMySQLpath}//{path_Database}");
 
-                    byte[] userIDByte = File.ReadAllBytes(path_UserID);
-                    byte[] passwordByte = File.ReadAllBytes(path_Password);
-                    byte[] entropyByte = File.ReadAllBytes(path_entropy);
+                    byte[] userIDByte = File.ReadAllBytes($"{personalMySQLpath}//{path_UserID}");
+                    byte[] passwordByte = File.ReadAllBytes($"{personalMySQLpath}//{path_Password}");
+                    byte[] entropyByte = File.ReadAllBytes($"{personalMySQLpath}//{path_entropy}");
 
                     byte[] decipherUserID = ProtectedData.Unprotect(userIDByte, entropyByte, DataProtectionScope.CurrentUser);
                     byte[] decipherPassword = ProtectedData.Unprotect(passwordByte, entropyByte, DataProtectionScope.CurrentUser);
@@ -331,6 +366,7 @@ namespace WindowsForms_NET_Framework4
                 catch
                 {
                     textBox1.Text = null;
+                    textBox2.Text = null;
                     textBox3.Text = null;
                     textBox4.Text = null;
                     textBox5.Text = null;

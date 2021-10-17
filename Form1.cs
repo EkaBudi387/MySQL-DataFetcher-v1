@@ -63,13 +63,13 @@ namespace WindowsForms_NET_Framework4
 
             if (Form2.IsMySQL)
             {
-                this.Text = "MySql-DataRetriever v1p2";
+                this.Text = "MySql-DataRetriever v1p4";
                 db = Form2.db;
                 connection = Form2.connection;
             }
             else
             {
-                this.Text = "MsSqlServer-DataRetriever v1p2";
+                this.Text = "MSSqlServer-DataRetriever v1p4";
                 db = Form2.dbSQL;
                 connectionSQL = Form2.connectionSQL;
             }

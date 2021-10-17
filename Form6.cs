@@ -13,11 +13,11 @@ namespace WindowsForms_NET_Framework4
     public partial class Form6 : Form
     {
 
-        string path_access = Path.Combine(Directory.GetCurrentDirectory(), "accessPath.txt");
-        string path_log = Path.Combine(Directory.GetCurrentDirectory(), "logPath.txt");
+        string path_access = "accessPath.txt";
+        string path_log = "logPath.txt";
 
-        string path_accessSQL = Path.Combine(Directory.GetCurrentDirectory(), "accessPathSQL.txt");
-        string path_logSQL = Path.Combine(Directory.GetCurrentDirectory(), "logPathSQL.txt");
+        string path_accessSQL = "accessPathSQL.txt";
+        string path_logSQL = "logPathSQL.txt";
 
 
         public Form6()
@@ -31,26 +31,13 @@ namespace WindowsForms_NET_Framework4
             {
                 if (textBox3.Text == "We202005%%")
                 {
-                    try
-                    {
-                        File.WriteAllText(path_access, GlobalCryptography.Decrypt(File.ReadAllText(path_access)));
-                        File.WriteAllText(path_log, GlobalCryptography.Decrypt(File.ReadAllText(path_log)));
-                    }
-                    catch
-                    {
-                        MessageBox.Show("No path stored");
-                    }
 
-                    if (textBox1.Text != "")
-                        File.AppendAllText(path_access, textBox1.Text + "\n");
-
-                    if (textBox2.Text != "")
-                        File.AppendAllText(path_log, textBox2.Text + "\n");
-
-                    File.WriteAllText(path_access, GlobalCryptography.Encrypt(File.ReadAllText(path_access)));
-                    File.WriteAllText(path_log, GlobalCryptography.Encrypt(File.ReadAllText(path_log)));
+                    File.WriteAllText($"{Form2.personalMySQLpath}//{path_access}", GlobalCryptography.Encrypt(textBox1.Text));
+                    File.WriteAllText($"{Form2.personalMySQLpath}//{path_log}", GlobalCryptography.Encrypt(textBox2.Text));
 
                     MessageBox.Show("Path Added", "Information");
+
+                    this.Hide();
                 }
 
                 else
@@ -62,26 +49,13 @@ namespace WindowsForms_NET_Framework4
             {
                 if (textBox3.Text == "We202005%%")
                 {
-                    try
-                    {
-                        File.WriteAllText(path_accessSQL, GlobalCryptography.Decrypt(File.ReadAllText(path_accessSQL)));
-                        File.WriteAllText(path_logSQL, GlobalCryptography.Decrypt(File.ReadAllText(path_logSQL)));
-                    }
-                    catch
-                    {
-                        MessageBox.Show("No path stored");
-                    }
 
-                    if (textBox1.Text != "")
-                        File.AppendAllText(path_accessSQL, textBox1.Text + "\n");
-
-                    if (textBox2.Text != "")
-                        File.AppendAllText(path_logSQL, textBox2.Text + "\n");
-
-                    File.WriteAllText(path_accessSQL, GlobalCryptography.Encrypt(File.ReadAllText(path_accessSQL)));
-                    File.WriteAllText(path_logSQL, GlobalCryptography.Encrypt(File.ReadAllText(path_logSQL)));
+                    File.WriteAllText($"{Form2.personalMSSQLpath}//{path_accessSQL}", GlobalCryptography.Encrypt(textBox1.Text));
+                    File.WriteAllText($"{Form2.personalMSSQLpath}//{path_logSQL}", GlobalCryptography.Encrypt(textBox2.Text));
 
                     MessageBox.Show("Path Added", "Information");
+
+                    this.Hide();
                 }
 
                 else
